@@ -9,7 +9,10 @@ To reconstruct the database type in the PostgreSQL interactive terminal :
 $ pg_dump db_name < lamsdb.dump
 ```
 
-### Structure 
-Learning Design are represented as sequences of learning activities.
-
-
+### Structure
+LAMS learning designs are represented as sequences of learning activities and are stored in XML files. Learning activities can be either simple or complex. The complex activities are used to describe the construction of sub-sequences of activities within an instructional design. A common example that causes the creation of nested sub-sequences is the division of the Learners into groups where each group has to complete different tasks. The most common example of simple activities are the Tools, which are self-contained modules that form most of the "functionality" that the Learner interacts with in LAMS. Each Tool links to an another XML file which includes the attributes and the content of the module. More information about the LAMS Tool Activities can be found in [lams activities](https://wiki.lamsfoundation.org/display/lamsdocs/Activities). All the possible activity types and the rest attributes of a learning activity are described in the java class [Activity.java](https://github.com/lamsfoundation/lams/blob/master/lams_common/src/java/org/lamsfoundation/lams/learningdesign/Activity.java) can be found.
+<br>
+#### Complex Activities:
+<ul>
+    <li>FLOATING_ACTIVITY_TYPE: It ts used to initialize a sequence. Some learning designs might include a mini complementary sequence</li>
+</ul>
