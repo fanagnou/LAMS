@@ -21,7 +21,7 @@ To reproduce the database, type in the PostgreSQL interactive terminal:
 ```bash
 $ pg_dump db_name < lamsdb.dump
 ```
-#### DB Tables
+### DB Tables
 <ul>
     <li> sequences(id, title, user_id, length, total_activities)</li>
     <li>activities(id, sequence_id, type, title, subsequences)</li>
@@ -31,7 +31,7 @@ $ pg_dump db_name < lamsdb.dump
 
 Learning designs are stored in the table sequences and the lenght attribute refers to the main sequence of the lesson as this is displayed in Preview Mode. In table subsequences, both the main sequence and the sub-sequences of a lesson are stored. The parent_id refers to the complex activity that causes the creation of a sub-sequence ad it is used for retrieving all the possible paths within a lesson without requiring joins with other tables. Information about the Learning activities is stored in the remaining tables. The activities_info table is used for storing the content of Tool Activities in jsonb format.
 
-#### Statistics
+### Statistics
 
 |              type              | frequency|
 --------------------------------|-----------
@@ -51,5 +51,24 @@ Learning designs are stored in the table sequences and the lenght attribute refe
    
 Most common tool types and their frequency
 
+### Sample queries
 
+#### All questions from all surveys
+Query that digs into the jsonb structure to extract every question from all the quizzes in all the graphs (complex because sometimes the field questions has a single question, sometimes an array of questions):
 
+```sql
+WITH questionrows
+     AS (SELECT ( data -> 'qaQueContents' ->
+                  'org.lamsfoundation.lams.tool.qa.QaQueContent' ) AS
+                q
+         FROM   activities_info),
+     questions
+     AS (SELECT CASE
+                  WHEN Jsonb_typeof(q) = 'array' THEN Jsonb_array_elements(q)
+                  ELSE q
+                END AS q
+         FROM   questionrows
+         WHERE  q IS NOT NULL)
+SELECT q -> 'question'
+FROM   questions; 
+ ```
